@@ -9,6 +9,22 @@ import javax.jws.WebService;
 public class WSBank{
     Connector conn = new Connector();
     @WebMethod
+    public boolean validate(int account){
+        String query = "SELECT * FROM account WHERE no_rekening='"+account+"'";
+        boolean exist = false;
+        try {
+            ResultSet result = conn.getQuery(query);
+            if(result.next()){
+                exist = true;
+            } else {
+                exist = false;
+            }
+        } catch (Exception e) {
+        }
+            //TODO: handle exception
+        return exist;
+    }
+
     public String transfer(int sender, int receiver){
         String query = "SELECT * FROM account WHERE no_rekening='"+sender+"''";
         String name = "";
@@ -22,4 +38,5 @@ public class WSBank{
             //TODO: handle exception
         return name;
     }
+
 }
