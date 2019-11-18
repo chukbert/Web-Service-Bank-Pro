@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<endpoints xmlns='http://java.sun.com/xml/ns/jax-ws/ri/runtime' version='2.0'>
+    <endpoint name="helloworldimpl" implementation="example.HelloWorld" url-pattern="/HelloWorld"></endpoint>
+    <endpoint name="wsbankimpl" implementation="services.WSBank" url-pattern="/WSBank"></endpoint>
+</endpoints>
