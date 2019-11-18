@@ -71,4 +71,27 @@ public class WSBank{
         return status;
     }
 
+    public int generateVA(int account){
+        String queryAccount = "SELECT * FROM account WHERE no_rekening='"+account+"'";
+        String queryMax = "SELECT MAX(no_virtual_account) AS max FROM virtual_account";
+        int virtual_account = 0;
+
+        
+        try {
+            ResultSet result = conn.getQuery(query);
+            if(result.next()){
+                ResultSet resultAccount = conn.getQuery(queryAccount);
+                ResultSet resultMax = conn.getQuery(queryMax);
+                int va = resultMax.getInt('max')+1;
+                String queryInsertVA = "INSERT INTO no_virtual_account ('no_rekening', 'no_virtual_accouont') VALUES ('"+resultAccount.getInt('no_rekening')+"','"+va+"')";
+                int updateVA = conn.updateQuery(queryInsertVA);
+            } else {
+                
+            }
+        } catch (Exception e) {
+        }
+
+        return va;
+    }
+
 }
