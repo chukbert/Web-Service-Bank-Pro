@@ -41,9 +41,13 @@ public class WSBank{
                     if(senderBalance >= amount){
                         String subSender = "UPDATE account SET balance='"+(senderBalance-amount)+"' WHERE no_rekening='"+sender+"'";
                         String addReceiver = "UPDATE account SET balance='"+(receiverBalance+amount)+"' WHERE no_rekening='"+receiver+"'";
+                        String transSender = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+sender+"', 'CREDIT', '"+amount+"', '"+receiver+"', CURRENT_TIMESTAMP)";
+                        String transReceiver = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+receiver+"', 'DEBIT', '"+amount+"', '"+sender+"', CURRENT_TIMESTAMP)";
                         try {
                             int sendStatus = conn.updateQuery(subSender);
                             int receiveStatus = conn.updateQuery(addReceiver);
+                            int tsStatus = conn.updateQuery(transSender);
+                            int trStatus = conn.updateQuery(transReceiver);
                             System.out.println("STATUS TRANSAKSI");
                             System.out.println(sendStatus);
                             System.out.println(receiveStatus);
@@ -56,19 +60,51 @@ public class WSBank{
                             //TODO: handle exception
                         }
                     } else {
-                        status = "FAILED";
+                        status = "FAILED1";
                     }
                 } else {
-                    status = "FAILED";
+                    status = "FAILED2";
                 }
             }
             else{
-                status = "FAILED";
+                status = "FAILED3";
             }
         } catch (Exception e) {
         }
             //TODO: handle exception
         return status;
+    }
+
+    public int generateVA(int account){
+        String queryAccount = "SELECT * FROM account WHERE no_rekening='"+account+"'";
+        String queryMax = "SELECT MAX(no_virtual_account) AS max FROM virtual_account";
+        //first va default
+        int va = 9000;
+
+        
+        try {
+            ResultSet result = conn.getQuery(queryAccount);
+            if(result.next()){
+                ResultSet resultMax = conn.getQuery(queryMax);
+                resultMax.next();
+                System.out.println("max");
+                System.out.println(resultMax.getInt("max"));
+                if(resultMax.getInt("max")>=9000){
+                    va = resultMax.getInt("max") + 1;
+                }
+                String queryInsertVA = "INSERT INTO virtual_account (no_rekening, no_virtual_account) VALUES ('"+result.getInt("no_rekening")+"','"+va+"')";
+                System.out.println(queryInsertVA);
+                int updateVA = conn.updateQuery(queryInsertVA);
+                if(updateVA != 1){
+                    va = 0;
+                }
+            } else {
+                
+            }
+        } catch (Exception e) {
+        }
+
+        return va;
     }
 
 }
