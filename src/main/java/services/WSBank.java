@@ -41,9 +41,13 @@ public class WSBank{
                     if(senderBalance >= amount){
                         String subSender = "UPDATE account SET balance='"+(senderBalance-amount)+"' WHERE no_rekening='"+sender+"'";
                         String addReceiver = "UPDATE account SET balance='"+(receiverBalance+amount)+"' WHERE no_rekening='"+receiver+"'";
+                        String transSender = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+sender+"', 'CREDIT', '"+amount+"', '"+receiver+"', CURRENT_TIMESTAMP)";
+                        String transReceiver = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+receiver+"', 'DEBIT', '"+amount+"', '"+sender+"', CURRENT_TIMESTAMP)";
                         try {
                             int sendStatus = conn.updateQuery(subSender);
                             int receiveStatus = conn.updateQuery(addReceiver);
+                            int tsStatus = conn.updateQuery(transSender);
+                            int trStatus = conn.updateQuery(transReceiver);
                             System.out.println("STATUS TRANSAKSI");
                             System.out.println(sendStatus);
                             System.out.println(receiveStatus);
@@ -56,14 +60,14 @@ public class WSBank{
                             //TODO: handle exception
                         }
                     } else {
-                        status = "FAILED";
+                        status = "FAILED1";
                     }
                 } else {
-                    status = "FAILED";
+                    status = "FAILED2";
                 }
             }
             else{
-                status = "FAILED";
+                status = "FAILED3";
             }
         } catch (Exception e) {
         }
