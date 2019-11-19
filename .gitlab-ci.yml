@@ -5,8 +5,6 @@ stages:
 
 checkstyle-lint:
   stage: lint
-  tags:
-    - lint
   before_script:
     - curl -OL https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.26/checkstyle-8.26-all.jar
   script:
