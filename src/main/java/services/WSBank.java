@@ -107,30 +107,39 @@ public class WSBank{
         return va;
     }
 
-    public boolean checkTransaction(int account, int amount, Date start, Date end){
+    public boolean checkTransaction(int account, int amount, String start, String end){
+        String queryTransaction = "SELECT * FROM transaction WHERE (account_number = '"+account+"' OR id_account = '"+account+"') AND (time>='"+start+"' AND time<='"+end+"') AND (amount ='"+amount+"')";
         String queryAccount = "SELECT * FROM transaction WHERE account_number='"+account+"'";
         String queryTime = "SELECT time FROM transaction WHERE account_number='"+account+"'";
         boolean exist = false;
 
-        
         try {
-            ResultSet result = conn.getQuery(queryAccount);
+            ResultSet result = conn.getQuery(queryTransaction);
             if(result.next()){
-                ResultSet resultTime = conn.getQuery(queryTime);
-                resultTime.next();
-                System.out.println("time");
-                System.out.println(resultTime.getTimestamp("time"));
-                Date transTime = resultTime.getTimestamp("time");
-                if((transTime.after(start)||transTime.equals(start)) && (transTime.before(end)||transTime.equals(end))){
-                    exist = true;
-                } else {
-                    exist = false;
-                }
-            } else {
-                
+                exist = true;
             }
         } catch (Exception e) {
+            //TODO: handle exception
         }
+
+        // try {
+        //     ResultSet result = conn.getQuery(queryAccount);
+        //     if(result.next()){
+        //         ResultSet resultTime = conn.getQuery(queryTime);
+        //         resultTime.next();
+        //         System.out.println("time");
+        //         System.out.println(resultTime.getTimestamp("time"));
+        //         Timestamp transTime = resultTime.getTimestamp("time");
+        //         if((transTime.after(start)||transTime.equals(start)) && (transTime.before(end)||transTime.equals(end))){
+        //             exist = true;
+        //         } else {
+        //             exist = false;
+        //         }
+        //     } else {
+                
+        //     }
+        // } catch (Exception e) {
+        // }
 
         return exist;
     }
