@@ -41,8 +41,8 @@ public class WSBank{
                     if(senderBalance >= amount){
                         String subSender = "UPDATE account SET balance='"+(senderBalance-amount)+"' WHERE no_rekening='"+sender+"'";
                         String addReceiver = "UPDATE account SET balance='"+(receiverBalance+amount)+"' WHERE no_rekening='"+receiver+"'";
-                        String transSender = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+sender+"', 'CREDIT', '"+amount+"', '"+receiver+"', CURRENT_TIMESTAMP)";
-                        String transReceiver = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+receiver+"', 'DEBIT', '"+amount+"', '"+sender+"', CURRENT_TIMESTAMP)";
+                        String transSender = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+sender+"', 'DEBIT', '"+amount+"', '"+receiver+"', CURRENT_TIMESTAMP)";
+                        String transReceiver = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+receiver+"', 'CREDIT', '"+amount+"', '"+sender+"', CURRENT_TIMESTAMP)";
                         try {
                             int sendStatus = conn.updateQuery(subSender);
                             int receiveStatus = conn.updateQuery(addReceiver);
