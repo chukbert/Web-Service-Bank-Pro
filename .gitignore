@@ -182,3 +182,5 @@ Temporary Items
 # ignore dowloaded wsdl
 src/wsdl
 /classes/
+
+target/
