@@ -107,4 +107,33 @@ public class WSBank{
         return va;
     }
 
+    public boolean checkTransaction(int account, int amount, Date start, Date end){
+        String queryAccount = "SELECT * FROM transaction WHERE account_number='"+account+"'";
+        String queryTime = "SELECT time FROM transaction WHERE account_number='"+account+"'";
+        boolean exist = false;
+
+        
+        try {
+            ResultSet result = conn.getQuery(queryAccount);
+            if(result.next()){
+                ResultSet resultTime = conn.getQuery(queryTime);
+                resultTime.next();
+                System.out.println("time");
+                System.out.println(resultTime.getTimestamp("time"));
+                Date transTime = resultTime.getTimestamp("time");
+                if((transTime.after(start)||transTime.equals(start)) && (transTime.before(end)||transTime.equals(end))){
+                    exist = true;
+                } else {
+                    exist = false;
+                }
+            } else {
+                
+            }
+        } catch (Exception e) {
+        }
+
+        return exist;
+    }
+
+
 }
