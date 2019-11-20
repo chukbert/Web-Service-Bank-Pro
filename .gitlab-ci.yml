@@ -1,0 +1,11 @@
+image: openjdk:latest
+
+stages:
+  - lint
+
+checkstyle-lint:
+  stage: lint
+  before_script:
+    - curl -OL https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.26/checkstyle-8.26-all.jar
+  script:
+    - java -jar checkstyle-8.26-all.jar -c google_checks.xml src
