@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="engima-1.0-SNAPSHOT.war">
+    <root id="archive" name="engima.war">
       <element id="artifact" artifact-name="engima:war exploded" />
     </root>
   </artifact>
