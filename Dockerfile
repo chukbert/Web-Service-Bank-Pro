@@ -1,4 +1,4 @@
-FROM tomcat:9.0.27-jdkll
+FROM tomcat:9.0.27-jdk11
 
 WORKDIR /usr/local/tomcat
 
