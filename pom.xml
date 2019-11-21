@@ -91,6 +91,7 @@
                 <configuration>
                     <webXml>web/WEB-INF/web.xml</webXml>
                     <warSourceDirectory>web</warSourceDirectory>
+                    <warName>engima</warName>
                 </configuration>
             </plugin>
         </plugins>

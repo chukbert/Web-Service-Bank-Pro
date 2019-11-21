@@ -2,6 +2,8 @@ image: openjdk:latest
 
 stages:
   - lint
+  - build-war
+  - build-image
 
 checkstyle-lint:
   stage: lint
@@ -9,3 +11,34 @@ checkstyle-lint:
     - curl -OL https://github.com/checkstyle/checkstyle/releases/download/checkstyle-8.26/checkstyle-8.26-all.jar
   script:
     - java -jar checkstyle-8.26-all.jar -c google_checks.xml src
+
+build-war:
+  stage: build-war
+  image: maven:latest
+  only:
+    - master
+    - develop
+  artifacts:
+    paths:
+      - target/
+  script:
+    - mvn install
+
+build-image:
+  stage: build-image
+  only:
+    - master
+    - develop
+  tags:
+    - deploy
+  script:
+    - docker stop ws-bank || true && docker rm ws-bank || true
+    - docker build -o ./ -t ws-bank-image .
+    - docker run --name ws-bank -p 8080:8080 -d ws-bank-image 
+    
+
+
+
+
+
+
