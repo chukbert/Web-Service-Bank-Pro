@@ -25,39 +25,39 @@ public class WSBank{
         return exist;
     }
 
-    public void getAccountData(
-        @WebParam(name = "name", mode = WebParam.Mode.OUT) Holder<String> name,
-        @WebParam(name = "account_number", mode = WebParam.Mode.INOUT) Holder<Integer> accountNumber,
+    public void getDataNasabah(
+        @WebParam(name = "namaNasabah", mode = WebParam.Mode.OUT) Holder<String> namaNasabah,
+        @WebParam(name = "no_rekening", mode = WebParam.Mode.INOUT) Holder<Integer> no_rekening,
         @WebParam(name = "balance", mode = WebParam.Mode.OUT) Holder<Integer> balance,
-        @WebParam(name = "transactions", mode = WebParam.Mode.OUT)
+        @WebParam(name = "transaksi", mode = WebParam.Mode.OUT)
         Holder<List<Transaction>> transactions) {
 
-        final String dataQuery = "SELECT * FROM account WHERE account_number = " + accountNumber.value;
-        final ResultSet rsData = conn.getResultQuery(dataQuery);
+        final String queryAkun = "SELECT * FROM account WHERE no_rekening = " + no_rekening.value;
+        final ResultSet rsData = conn.getQuery(queryAkun);
         
         try {
             if (rsData.next()) {
-                name.value = rsData.getString("account_name");
-                balance.value = rsData.getInt("account_balance");
+                namaNasabah.value = rsData.getString("nama");
+                balance.value = rsData.getInt("balance");
             }
         } catch (final Exception e) {
             System.out.println(e.getMessage());
             return;
         }
 
-        final String transactionsQuery = "SELECT * FROM transaction WHERE account_number = "+ accountNumber.value;
-        final ResultSet rsTransaction = conn.getResultQuery(transactionsQuery);
+        final String queryTransaction = "SELECT * FROM transaction WHERE account_number = "+ no_rekening.value;
+        final ResultSet rsTransaction = conn.getQuery(queryTransaction);
 
         try {
             List<Transaction> trs = new ArrayList<Transaction>();
             while (rsTransaction.next()) {
                 trs.add(
                     new Transaction(
-                        rsTransaction.getInt("transaction_id"),
-                        rsTransaction.getString("transaction_type"),
-                        rsTransaction.getInt("target_account_number"),
+                        rsTransaction.getInt("id"),
+                        rsTransaction.getString("type"),
                         rsTransaction.getInt("amount"),
-                        rsTransaction.getString("transaction_time")
+                        rsTransaction.getInt("account_number"),
+                        rsTransaction.getString("time")
                     )
                 );
             }
