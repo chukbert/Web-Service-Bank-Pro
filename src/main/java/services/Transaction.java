@@ -1,3 +1,5 @@
+package services;
+
 public class Transaction {
     int idTransaksi;
     String type;
