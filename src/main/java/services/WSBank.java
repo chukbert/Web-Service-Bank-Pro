@@ -1,8 +1,12 @@
 package services;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.jws.WebParam;
+import javax.xml.ws.Holder;
 
 @WebService()
 
@@ -25,7 +29,53 @@ public class WSBank{
         return exist;
     }
 
+    public void getDataNasabah(
+        @WebParam(name = "namaNasabah", mode = WebParam.Mode.OUT) Holder<String> namaNasabah,
+        @WebParam(name = "no_rekening", mode = WebParam.Mode.INOUT) Holder<Integer> no_rekening,
+        @WebParam(name = "balance", mode = WebParam.Mode.OUT) Holder<Integer> balance,
+        @WebParam(name = "transaksi", mode = WebParam.Mode.OUT)
+        Holder<List<Transaction>> transaksi) {
 
+        final String queryAkun = "SELECT * FROM account WHERE no_rekening = " + no_rekening.value;
+        final ResultSet rsData = conn.getQuery(queryAkun);
+        
+        try {
+            if (rsData.next()) {
+                namaNasabah.value = rsData.getString("nama");
+                balance.value = rsData.getInt("balance");
+            }
+        } catch (final Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        final String queryTransaction = "SELECT * FROM transaction WHERE id_account = "+ no_rekening.value;
+        final ResultSet rsTransaction = conn.getQuery(queryTransaction);
+
+        try {
+            List<Transaction> trs = new ArrayList<Transaction>();
+            while (rsTransaction.next()) {
+                Transaction t = new Transaction(
+                    rsTransaction.getInt("id"),
+                    rsTransaction.getString("type"),
+                    rsTransaction.getInt("amount"),
+                    rsTransaction.getInt("account_number"),
+                    rsTransaction.getString("time")
+                );
+
+                
+                trs.add(t);
+            }
+            for (Transaction i : trs) {
+                    i.printClass();
+            }
+            transaksi.value = trs;
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    
     public String transfer(int sender, int receiver, int amount){
         String querySender = "SELECT * FROM account WHERE no_rekening='"+sender+"'";
         String queryReceiver = "SELECT * FROM account WHERE no_rekening='"+receiver+"'";
