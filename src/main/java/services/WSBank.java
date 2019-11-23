@@ -34,7 +34,7 @@ public class WSBank{
         @WebParam(name = "no_rekening", mode = WebParam.Mode.INOUT) Holder<Integer> no_rekening,
         @WebParam(name = "balance", mode = WebParam.Mode.OUT) Holder<Integer> balance,
         @WebParam(name = "transaksi", mode = WebParam.Mode.OUT)
-        Holder<List<Transaction>> transactions) {
+        Holder<List<Transaction>> transaksi) {
 
         final String queryAkun = "SELECT * FROM account WHERE no_rekening = " + no_rekening.value;
         final ResultSet rsData = conn.getQuery(queryAkun);
@@ -49,23 +49,27 @@ public class WSBank{
             return;
         }
 
-        final String queryTransaction = "SELECT * FROM transaction WHERE account_number = "+ no_rekening.value;
+        final String queryTransaction = "SELECT * FROM transaction WHERE id_account = "+ no_rekening.value;
         final ResultSet rsTransaction = conn.getQuery(queryTransaction);
 
         try {
             List<Transaction> trs = new ArrayList<Transaction>();
             while (rsTransaction.next()) {
-                trs.add(
-                    new Transaction(
-                        rsTransaction.getInt("id"),
-                        rsTransaction.getString("type"),
-                        rsTransaction.getInt("amount"),
-                        rsTransaction.getInt("account_number"),
-                        rsTransaction.getString("time")
-                    )
+                Transaction t = new Transaction(
+                    rsTransaction.getInt("id"),
+                    rsTransaction.getString("type"),
+                    rsTransaction.getInt("amount"),
+                    rsTransaction.getInt("account_number"),
+                    rsTransaction.getString("time")
                 );
+
+                
+                trs.add(t);
             }
-            transactions.value = trs;
+            for (Transaction i : trs) {
+                i.printClass();
+            }
+            transaksi.value = trs;
         } catch (final Exception e) {
             e.printStackTrace();
         }
