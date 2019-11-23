@@ -67,7 +67,7 @@ public class WSBank{
                 trs.add(t);
             }
             for (Transaction i : trs) {
-                    i.printClass();
+                i.printClass();
             }
             transaksi.value = trs;
         } catch (final Exception e) {
@@ -123,7 +123,7 @@ public class WSBank{
         } catch (Exception e) {
         }
             //TODO: handle exception
-        return name;
+        return status;
     }
 
     public int generateVA(int account){
