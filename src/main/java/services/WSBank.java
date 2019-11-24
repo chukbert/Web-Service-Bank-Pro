@@ -79,11 +79,13 @@ public class WSBank{
     public String transfer(int sender, int receiver, int amount){
         String querySender = "SELECT * FROM account WHERE no_rekening='"+sender+"'";
         String queryReceiver = "SELECT * FROM account WHERE no_rekening='"+receiver+"'";
+        String queryReceiverVA = "SELECT * FROM virtual_account WHERE no_virtual_account='"+receiver+"'";
         String name = "";
         String status = "FAILED";
         try {
             ResultSet senderResult = conn.getQuery(querySender);
             ResultSet receiverResult = conn.getQuery(queryReceiver);
+            ResultSet receiverVAResult = conn.getQuery(queryReceiverVA);
             if(senderResult.next()){
                 // name = result.getString("nama");
                 if(receiverResult.next()){
@@ -110,7 +112,43 @@ public class WSBank{
                         } catch (Exception e) {
                             //TODO: handle exception
                         }
-                    } else {
+                    } 
+                    else {
+                        status = "FAILED1";
+                    }
+                }
+                else if (receiverVAResult.next()) {
+                    int senderBalance = senderResult.getInt("balance");
+                    int receiverAccount = receiverVAResult.getInt("no_rekening");
+                    String queryReceiverDetail = "SELECT * FROM account WHERE no_rekening='"+receiverAccount+"'";
+                    ResultSet receiverDetailResult = conn.getQuery(queryReceiverDetail);
+                    receiverDetailResult.next();
+                    int receiverBalance = receiverDetailResult.getInt("balance");
+                    
+
+                    if(senderBalance >= amount){
+                        String subSender = "UPDATE account SET balance='"+(senderBalance-amount)+"' WHERE no_rekening='"+sender+"'";
+                        String addReceiver = "UPDATE account SET balance='"+(receiverBalance+amount)+"' WHERE no_rekening='"+receiverAccount+"'";
+                        String transSender = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+sender+"', 'DEBIT', '"+amount+"', '"+receiver+"', CURRENT_TIMESTAMP)";
+                        String transReceiver = "INSERT INTO transaction (id, id_account, type, amount, account_number, time) VALUES (NULL, '"+receiver+"', 'CREDIT', '"+amount+"', '"+sender+"', CURRENT_TIMESTAMP)";
+                        try {
+                            int sendStatus = conn.updateQuery(subSender);
+                            int receiveStatus = conn.updateQuery(addReceiver);
+                            int tsStatus = conn.updateQuery(transSender);
+                            int trStatus = conn.updateQuery(transReceiver);
+                            System.out.println("STATUS TRANSAKSI");
+                            System.out.println(sendStatus);
+                            System.out.println(receiveStatus);
+                            if(sendStatus==1 && receiveStatus==1){
+                                status = "SUCCEEDVA";
+                            } else {
+                                status = "FALSE";
+                            }
+                        } catch (Exception e) {
+                            //TODO: handle exception
+                        }
+                    } 
+                    else {
                         status = "FAILED1";
                     }
                 } else {

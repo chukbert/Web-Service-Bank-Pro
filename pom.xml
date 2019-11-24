@@ -74,6 +74,11 @@
             <artifactId>resolver</artifactId>
             <version>20050927</version>
         </dependency>
+        <dependency>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>2.4</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
